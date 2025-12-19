@@ -1,4 +1,7 @@
-<script>
+
+
+<script >
+
     export let go;
     const handleLogin = () => {
         my.getAuthCode({
@@ -14,7 +17,6 @@
         });
     };
 </script>
-
 <div class="min-h-screen bg-gray-500 px-4 py-16 pb-24">
     <!-- Header -->
     <header class="mb-6">
@@ -69,5 +71,5 @@
         </button>
     </div>
 
-    <button onclick={handleLogin}></button>
+    <button on:click={handleLogin} class="border border-amber-950"> hhh</button>
 </div>

@@ -5,9 +5,8 @@
         increase,
         decrease,
         remove,
-    } from "../stores/cart";
-
-    import { createOrder } from "../stores/orders";
+} from "../stores/cart";
+import { createOrder } from "../stores/orders";
 
     export let open = false;
     export let close;
@@ -15,7 +14,8 @@
     const checkout = () => {
         let items;
 
-        cart.subscribe((v) => (items = v))();
+        const unsubscribe = cart.subscribe((v) => (items = v));
+        unsubscribe();
 
         if (items.length === 0) return;
 
