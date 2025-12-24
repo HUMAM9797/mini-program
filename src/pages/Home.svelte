@@ -1,22 +1,42 @@
-
-
-<script >
-
+<script>
     export let go;
+    
     const handleLogin = () => {
         my.getAuthCode({
-            scopes: ["auth_base"],
+            scopes: ["auth_base", "USER_ID"],
             success: (res) => {
-                my.alert({
-                    content: res.authCode,
-                });
+        fetch('https://its.mouamle.space/api/auth-with-superQi', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            token: res.authCode
+                        })
+                    }).then(res => res.json()).then(data => {
+                        my.alert({
+                            content: "Login successful" + JSON.stringify(data)
+                        });
+                    }).catch(err => {
+                        let errorDetails = '';
+                        if (err && typeof err === 'object') {
+                            errorDetails = JSON.stringify(err, null, 2);
+                        } else {
+                            errorDetails = String(err);
+                        }
+                        my.alert({
+                            content: "Error: " + errorDetails,
+                        });
+                    });
+        
             },
-            fail: (res) => {
-                console.log(res.authErrorScopes);
+            fail: (err) => {
+                console.log("Authorization failed:", err.authErrorScopes);
             },
         });
     };
 </script>
+
 <div class="min-h-screen bg-gray-500 px-4 py-16 pb-24">
     <!-- Header -->
     <header class="mb-6">
@@ -32,7 +52,7 @@
     <div class="grid gap-4">
         <!-- Products -->
         <button
-            on:click={() => go("products")}
+            onclick={() => go("products")}
             class="flex items-center justify-between rounded bg-white p-5 shadow-sm active:scale-95 transition"
         >
             <div class="flex flex-col items-start">
@@ -46,7 +66,7 @@
 
         <!-- Orders -->
         <button
-            on:click={() => go("orders")}
+            onclick={() => go("orders")}
             class="flex items-center justify-between rounded bg-white p-5 shadow-sm active:scale-95 transition"
         >
             <div class="flex flex-col items-start">
@@ -69,7 +89,14 @@
             </div>
             <span class="text-xl text-gray-300">›</span>
         </button>
+
+        <button
+        onclick={handleLogin}
+        class=" border border-amber-950 bg-blue-900  py-4"
+    >
+        Login
+    </button>
     </div>
 
-    <button on:click={handleLogin} class="border border-amber-950"> hhh</button>
+    
 </div>
