@@ -1,5 +1,22 @@
 <script>
     export let go;
+
+    const handlePay = () =>
+{
+    my.tradePay({
+  paymentUrl: "https://www.wallet.com/cashier?orderId=xxxxxxx", // get the redirectUrl from the server first
+    success: (res) => {
+    my.alert({
+        content: JSON.stringify(res),
+    });
+    },
+    fail: (res) => {
+    my.alert({
+        content: JSON.stringify(res),
+    });
+    }
+});
+}
     
     const handleLogin = () => {
         my.getAuthCode({
@@ -94,7 +111,12 @@
         onclick={handleLogin}
         class=" border border-amber-950 bg-blue-900  py-4"
     >
-        Login
+        Auth
+    </button>
+    <button 
+    onclick={handlePay}
+    class=" border border-amber-950 bg-blue-900  py-4">
+        Pay
     </button>
     </div>
 
