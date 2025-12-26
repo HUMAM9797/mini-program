@@ -40,6 +40,7 @@
                             token: res.authCode
                         })
                     }).then(res => res.json()).then(data => {
+                        token = data.token;
                         my.alert({
                             content: "Login successful" + JSON.stringify(data)
                         });
