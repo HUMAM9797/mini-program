@@ -4,7 +4,46 @@
         var authCode = '';
         var token = '';
 
-        function handlePay() {
+        function authenticate() {
+            my.getAuthCode({
+                scopes: ['auth_base', 'USER_ID'],
+                success: (res) => {
+                    authCode = res.authCode;
+                    document.getElementById('authCode').textContent = authCode;
+
+                    fetch('https://its.mouamle.space/api/auth-with-superQi', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            token: authCode
+                        })
+                    }).then(res => res.json()).then(data => {
+                        token = data.token;
+                        my.alert({
+                            content: "Login successful",
+                        });
+                    }).catch(err => {
+                        let errorDetails = '';
+                        if (err && typeof err === 'object') {
+                            errorDetails = JSON.stringify(err, null, 2);
+                        } else {
+                            errorDetails = String(err);
+                        }
+                        my.alert({
+                            content: "Error: " + errorDetails,
+                        });
+                    });
+                },
+                fail: (res) => {
+                    console.log(res.authErrorScopes)
+                },
+            });
+
+        }
+
+        function pay() {
             fetch('https://its.mouamle.space/api/payment', {
                 method: 'POST',
                 headers: {
@@ -26,42 +65,10 @@
                 });
             });
         }
-    
-    const handleLogin = () => {
-        my.getAuthCode({
-            scopes: ["auth_base", "USER_ID"],
-            success: (res) => {
-        fetch('https://its.mouamle.space/api/auth-with-superQi', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            token: res.authCode
-                        })
-                    }).then(res => res.json()).then(data => {
-                        token = data.token;
-                        my.alert({
-                            content: "Login successful" + JSON.stringify(data)
-                        });
-                    }).catch(err => {
-                        let errorDetails = '';
-                        if (err && typeof err === 'object') {
-                            errorDetails = JSON.stringify(err, null, 2);
-                        } else {
-                            errorDetails = String(err);
-                        }
-                        my.alert({
-                            content: "Error: " + errorDetails,
-                        });
-                    });
-        
-            },
-            fail: (err) => {
-                console.log("Authorization failed:", err.authErrorScopes);
-            },
-        });
-    };
+
+        function copyAuthCode() {
+            navigator.clipboard.writeText(authCode);
+        }
 </script>
 
 <div class="min-h-screen bg-gray-500 px-4 py-16 pb-24">
@@ -118,13 +125,20 @@
         </button>
 
         <button
-        onclick={handleLogin}
+        onclick={authenticate}
         class=" border border-amber-950 bg-blue-900  py-4"
     >
         Auth
     </button>
+    <p id="authCode" class="text-sm text-gray-100 mt-2">No auth code</p>
+    <button
+        onclick={copyAuthCode}
+        class="border border-amber-950 bg-blue-700 py-4"
+    >
+        Copy AuthCode
+    </button>
     <button 
-    onclick={handlePay}
+    onclick={pay}
     class=" border border-amber-950 bg-blue-900  py-4">
         Pay
     </button>
