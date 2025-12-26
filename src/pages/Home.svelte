@@ -1,22 +1,31 @@
 <script>
     export let go;
 
-    const handlePay = () =>
-{
-    my.tradePay({
-  paymentUrl: "https://www.wallet.com/cashier?orderId=xxxxxxx", // get the redirectUrl from the server first
-    success: (res) => {
-    my.alert({
-        content: JSON.stringify(res),
-    });
-    },
-    fail: (res) => {
-    my.alert({
-        content: JSON.stringify(res),
-    });
-    }
-});
-}
+        var authCode = '';
+        var token = '';
+
+        function handlePay() {
+            fetch('https://its.mouamle.space/api/payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+            }).then(res => res.json()).then(data => {
+                my.tradePay({
+                    paymentUrl: data.url,
+                    success: (res) => {
+                        my.alert({
+                            content: "Payment successful",
+                        });
+                    },
+                });
+            }).catch(err => {
+                my.alert({
+                    content: "Payment failed",
+                });
+            });
+        }
     
     const handleLogin = () => {
         my.getAuthCode({
